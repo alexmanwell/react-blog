@@ -6,7 +6,7 @@ export const PostList = ({posts, title}) => {
     <div>
       <h1>{title}:</h1>
       {posts.map((post, index) =>
-        <PostItem post={post} key={new Date() + index}/>
+        <PostItem number={index + 1} post={post} key={new Date() + index}/>
       )}
     </div>
   );
