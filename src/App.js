@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './styles/App.css';
 import {PostList} from "./components/PostList";
 import {PostForm} from "./components/PostForm";
@@ -6,19 +6,22 @@ import {PostFilter} from "./components/PostFilter";
 import MyModal from "./components/UI/modal/MyModal";
 import {MyButton} from "./components/UI/button/MyButton";
 import {usePosts} from "./hooks/usePosts";
+import PostService from "./api/PostService";
 
 function App() {
-  const [posts, setPosts] = useState([
-    {id: 1, title: "Javascript", description: "Description"},
-    {id: 2, title: "Javascript 2", description: "Description 2"},
-    {id: 3, title: "Javascript 3", description: "Description 3"},
-    {id: 4, title: "Javascript 4", description: "Description 4"},
-    {id: 5, title: "Javascript 5", description: "Description 5"},
-    {id: 6, title: "Javascript 6", description: "Description 6"},
-  ]);
+  const [posts, setPosts] = useState([]);
 
   const [filter, setFilter] = useState({sort: '', query: ''});
   const [modal, setModal] = useState(false);
+
+  const fetchPosts = async () => {
+    const posts = await PostService.getAll();
+    setPosts(posts);
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
 
