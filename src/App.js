@@ -11,6 +11,7 @@ import {Loader} from "./components/UI/loader/Loader";
 import {useFetching} from "./hooks/useFetching";
 import {getCountPage} from "./utils/pages";
 import {usePagination} from "./hooks/usePagination";
+import Pagination from "./components/UI/pagination/Pagination";
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -27,8 +28,6 @@ function App() {
     const totalCount = response.headers['x-total-count'];
     setTotalPages(getCountPage(totalCount, limit));
   });
-
-  const pages = usePagination(totalPages);
 
   useEffect(() => {
     fetchPosts(limit, page);
@@ -72,16 +71,11 @@ function App() {
         :
         <PostList remove={removePost} posts={sortedAndSearchedPosts} title={"Post List #1"}/>
       }
-      <div className="page__wrapper">
-        {pages.map((p) =>
-          <span
-            onClick={() => changePage(p)}
-            key={p}
-            className={page === p ? 'page page__current' : 'page'}>
-            {p}
-           </span>
-        )}
-      </div>
+      <Pagination
+        totalPages={totalPages}
+        page={page}
+        changePage={changePage}
+      />
     </div>
   )
 }
