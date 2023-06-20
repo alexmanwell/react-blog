@@ -1,0 +1,16 @@
+.mySelect {
+    padding: 5px 0px 5px 8px;
+    color: teal;
+    font-size: 14px;
+    background: transparent;
+    border: 1px solid teal;
+    cursor: pointer;
+}
+
+option:disabled {
+    color: lightgray;
+}
+
+option {
+    color: #008e8e;
+}
