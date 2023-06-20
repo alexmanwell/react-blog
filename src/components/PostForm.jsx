@@ -22,7 +22,7 @@ export const PostForm = ({create}) => {
       />
       <MyInput
         value={post.description}
-        onChange={event => setPost({...post, description: event.target.value})}
+        onChange={event => setPost({...post, body: event.target.value})}
         type="text"
         placeholder="Описание поста"
       />
