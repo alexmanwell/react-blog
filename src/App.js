@@ -9,19 +9,29 @@ import {usePosts} from "./hooks/usePosts";
 import PostService from "./api/PostService";
 import {Loader} from "./components/UI/loader/Loader";
 import {useFetching} from "./hooks/useFetching";
+import {getCountPage} from "./utils/pages";
+import {usePagination} from "./hooks/usePagination";
 
 function App() {
   const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState({sort: '', query: ''});
   const [modal, setModal] = useState(false);
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
-  const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
-    const posts = await PostService.getAll();
-    setPosts(posts);
+  const [totalPages, setTotalPages] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+
+  const [fetchPosts, isPostsLoading, postError] = useFetching(async (limit, page) => {
+    const response = await PostService.getAll(limit, page);
+    setPosts(response.data);
+    const totalCount = response.headers['x-total-count'];
+    setTotalPages(getCountPage(totalCount, limit));
   });
 
+  const pages = usePagination(totalPages);
+
   useEffect(() => {
-    fetchPosts();
+    fetchPosts(limit, page);
   }, []);
 
 
@@ -32,6 +42,11 @@ function App() {
 
   const removePost = (post) => {
     setPosts(posts.filter((p) => p.id !== post.id));
+  };
+
+  const changePage = (page) => {
+    setPage(page);
+    fetchPosts(limit, page);
   };
 
   return (
@@ -47,7 +62,7 @@ function App() {
         setFilter={setFilter}
       />
       {postError &&
-        <h1>Произошла ошибка <span style={{color: 'red'}}>{postError}</span></h1>
+      <h1>Произошла ошибка <span style={{color: 'red'}}>{postError}</span></h1>
       }
       {isPostsLoading
         ?
@@ -57,6 +72,16 @@ function App() {
         :
         <PostList remove={removePost} posts={sortedAndSearchedPosts} title={"Post List #1"}/>
       }
+      <div className="page__wrapper">
+        {pages.map((p) =>
+          <span
+            onClick={() => changePage(p)}
+            key={p}
+            className={page === p ? 'page page__current' : 'page'}>
+            {p}
+           </span>
+        )}
+      </div>
     </div>
   )
 }
