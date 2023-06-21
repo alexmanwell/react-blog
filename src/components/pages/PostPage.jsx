@@ -5,7 +5,7 @@ import PostService from "../../api/PostService";
 import {Loader} from "../UI/loader/Loader";
 import CommentList from "../CommentList";
 
-const PostPage = () => {
+export const PostPage = () => {
   const params = useParams();
   const [post, setPost] = useState({});
   const [comments, setComments] = useState([]);
@@ -44,5 +44,3 @@ const PostPage = () => {
     </div>
   );
 };
-
-export default PostPage;
