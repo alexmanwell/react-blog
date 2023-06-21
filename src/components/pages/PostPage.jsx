@@ -3,6 +3,7 @@ import {useParams} from 'react-router-dom'
 import {useFetching} from "../../hooks/useFetching";
 import PostService from "../../api/PostService";
 import {Loader} from "../UI/loader/Loader";
+import CommentList from "../CommentList";
 
 const PostPage = () => {
   const params = useParams();
@@ -37,16 +38,7 @@ const PostPage = () => {
       <h2>Comments</h2>
       {isCoomentsLoading
         ? <Loader/>
-        :
-        <div>
-          {comments.map((comment) =>
-            <div style={{marginTop: '5px', border: '1px solid teal'}}>
-              <h3>{comment.email}</h3>
-              <h4>{comment.id}. {comment.name}</h4>
-              <p style={{padding: '10px'}}>{comment.body}</p>
-            </div>)
-          }
-        </div>
+        : <CommentList comments={comments}/>
       }
 
     </div>
