@@ -4,9 +4,14 @@ import {Error} from "./pages/Error";
 import {privateRoutes, publicRoutes} from "../router";
 import {AuthContext} from "../context";
 import {Login} from "./pages/Login";
+import {Loader} from "./UI/loader/Loader";
 
 export const AppRouter = () => {
-  const {isAuth, setIsAuth} = useContext(AuthContext);
+  const {isAuth, isLoading} = useContext(AuthContext);
+
+  if (isLoading) {
+    return <Loader/>
+  }
 
   return (
     isAuth
