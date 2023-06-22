@@ -61,13 +61,12 @@ export const Posts = () => {
       {postError &&
       <h1>Произошла ошибка <span style={{color: 'red'}}>{postError}</span></h1>
       }
-      {isPostsLoading
-        ?
+
+      <PostList remove={removePost} posts={sortedAndSearchedPosts} title={"Post List #1"}/>
+      {isPostsLoading &&
         <div style={{display: 'flex', justifyContent: 'center', marginTop: '50px'}}>
           <Loader/>
         </div>
-        :
-        <PostList remove={removePost} posts={sortedAndSearchedPosts} title={"Post List #1"}/>
       }
       <Pagination
         totalPages={totalPages}
