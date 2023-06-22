@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {usePosts} from "../../hooks/usePosts";
 import {useFetching} from "../../hooks/useFetching";
 import PostService from "../../api/PostService";
@@ -10,6 +10,7 @@ import {Loader} from "../UI/loader/Loader";
 import {PostList} from "../PostList";
 import Pagination from "../UI/pagination/Pagination";
 import MyModal from "../UI/modal/MyModal";
+import {useObserver} from "../../hooks/useObserver";
 
 export const Posts = () => {
   const [posts, setPosts] = useState([]);
@@ -18,19 +19,23 @@ export const Posts = () => {
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
   const [totalPages, setTotalPages] = useState(0);
   const [limit, setLimit] = useState(10);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
+  const lastElement = useRef();
 
   const [fetchPosts, isPostsLoading, postError] = useFetching(async (limit, page) => {
     const response = await PostService.getAll(limit, page);
-    setPosts(response.data);
+    setPosts([...posts, ...response.data]);
     const totalCount = response.headers['x-total-count'];
     setTotalPages(getCountPage(totalCount, limit));
   });
 
+  useObserver(lastElement, page < totalPages, isPostsLoading, () =>{
+    setPage(page + 1);
+  });
+
   useEffect(() => {
     fetchPosts(limit, page);
-  }, []);
-
+  }, [page]);
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
@@ -43,7 +48,6 @@ export const Posts = () => {
 
   const changePage = (page) => {
     setPage(page);
-    fetchPosts(limit, page);
   };
 
   return (
@@ -63,6 +67,7 @@ export const Posts = () => {
       }
 
       <PostList remove={removePost} posts={sortedAndSearchedPosts} title={"Post List #1"}/>
+      <div style={{height: '20px', backgroundColor: 'red'}} ref={lastElement} />
       {isPostsLoading &&
         <div style={{display: 'flex', justifyContent: 'center', marginTop: '50px'}}>
           <Loader/>
